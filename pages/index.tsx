@@ -70,7 +70,7 @@ const Home: NextPage = () => {
   // Function to mint/claim an NFT
   const mint = async () => {
     if (isOnWrongNetwork) {
-      switchNetwork && switchNetwork(ChainId.Mumbai);
+      switchNetwork && switchNetwork(ChainId.Rinkeby);
       return;
     }
 
