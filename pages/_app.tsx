@@ -6,7 +6,7 @@ import Head from "next/head";
 // This is the chainId your dApp will work on.
 const activeChainId = ChainId.Mumbai;
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ pageProps }: AppProps) {
   return (
     <ThirdwebProvider desiredChainId={activeChainId}>
       <Head>
