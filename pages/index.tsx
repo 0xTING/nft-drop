@@ -41,7 +41,7 @@ const Home: NextPage = () => {
   // Load claimed supply and unclaimed supply
   const { data: unclaimedSupply } = useUnclaimedNFTSupply(nftDrop);
   const { data: claimedSupply } = useClaimedNFTSupply(nftDrop);
-
+  
   // Load the active claim condition
   const { data: activeClaimCondition } = useActiveClaimCondition(nftDrop);
 
