@@ -124,7 +124,10 @@ const Home: NextPage = () => {
                 </p>
               ) : (
                 // Show loading state if we're still loading the supply
-                <p>Loading...</p>
+                <p>Loading...
+                  <b>{claimedSupply?.toNumber()}</b>
+                  <b>{unclaimedSupply?.toNumber()}</b>
+                </p>
               )}
             </div>
           </div>
