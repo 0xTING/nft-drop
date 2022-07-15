@@ -51,7 +51,7 @@ const Home: NextPage = () => {
   const { data: activeClaimCondition } = useActiveClaimCondition(nftDrop);
 
   // Load ineligibility on claim
-  const { data: ineligibilityReasons } = useClaimIneligibilityReasons(nftDrop);
+  const { data: ineligibilityReasons } = useClaimIneligibilityReasons(nftDrop, { quantity : 1});
 
   // Check if there's NFTs left on the active claim phase
   const isNotReady =
