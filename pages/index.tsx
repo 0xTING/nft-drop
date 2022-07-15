@@ -51,7 +51,7 @@ const Home: NextPage = () => {
   const { data: activeClaimCondition } = useActiveClaimCondition(nftDrop);
 
   // Load ineligibility on claim
-  const { data: ineligibilityReasons } = useClaimIneligibilityReasons(nftDrop, { quantity : 1});
+  const { data: ineligibilityReasons } = useClaimIneligibilityReasons(nftDrop, { quantity, walletAddress: address });
 
   // Check if there's NFTs left on the active claim phase
   const isNotReady =
@@ -64,6 +64,10 @@ const Home: NextPage = () => {
 
   // Check if there's any NFTs left
   const isSoldOut = unclaimedSupply?.toNumber() === 0;
+   
+  // Not soldout, connected and there are no ineligibility reasons
+  const canClaim =
+    !isSoldOut && !!address && !ineligibilityReasons.data?.length;
 
   // Check price
   const price = parseUnits(
@@ -102,6 +106,7 @@ const Home: NextPage = () => {
 
   return (
     <div className={styles.container}>
+      
       <div className={styles.mintInfoContainer}>
         <div className={styles.infoSide}>
           {/* Title of your NFT Collection */}
@@ -159,10 +164,9 @@ const Home: NextPage = () => {
                 <h2>Not ready to be minted yet</h2>
               </div>
             ) : (
+                  canClaim ? (
               <>
                 <p>Quantity</p>
-                {console.log(`${JSON.stringify(activeClaimCondition)}`)};
-                {console.log(`${JSON.stringify(ineligibilityReasons)}`)};
                 <div className={styles.quantityContainer}>
                   <button
                     className={`${styles.quantityControlButton}`}
@@ -210,6 +214,12 @@ const Home: NextPage = () => {
                       }`}
                 </button>
               </>
+                  ) :
+                  (
+                    <>
+                      <p>You cannot mint this phase</p>
+                    </>
+                  )
             )
           ) : (
             <div className={styles.buttons}>
