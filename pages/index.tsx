@@ -6,6 +6,7 @@ import {
   useNFTDrop,
   useUnclaimedNFTSupply,
   useActiveClaimCondition,
+  useClaimIneligibilityReasons,
   useClaimNFT,
   useWalletConnect,
   useCoinbaseWallet,
@@ -48,6 +49,9 @@ const Home: NextPage = () => {
   
   // Load the active claim condition
   const { data: activeClaimCondition } = useActiveClaimCondition(nftDrop);
+
+  // Load ineligibility on claim
+  const { data: ineligibilityReasons } = useClaimIneligibilityReasons(nftDrop);
 
   // Check if there's NFTs left on the active claim phase
   const isNotReady =
@@ -158,7 +162,8 @@ const Home: NextPage = () => {
               <>
 
                 <p>Quantity</p>
-                {activeClaimCondition?.snapshot}
+                {activeClaimCondition?.availableSupply}
+                {console.log(ineligibilityReasons)}
                 <div className={styles.quantityContainer}>
                   <button
                     className={`${styles.quantityControlButton}`}
