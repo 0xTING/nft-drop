@@ -157,7 +157,7 @@ const Home: NextPage = () => {
             ) : (
               <>
                 <p>Quantity</p>
-                console.log(activeClaimCondition);
+                {console.log(activeClaimCondition)};
                 <div className={styles.quantityContainer}>
                   <button
                     className={`${styles.quantityControlButton}`}
