@@ -162,7 +162,7 @@ const Home: NextPage = () => {
               <>
                 <p>Quantity</p>
                 <p>{`${activeClaimCondition}`}</p>
-                console.log(`${activeClaimCondition}`);
+                {console.log(`${activeClaimCondition}`)};
                 <p>{`${ineligibilityReasons}`}</p>
                 <div className={styles.quantityContainer}>
                   <button
