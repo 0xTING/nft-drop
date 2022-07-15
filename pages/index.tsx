@@ -51,7 +51,7 @@ const Home: NextPage = () => {
   const { data: activeClaimCondition } = useActiveClaimCondition(nftDrop);
 
   // Load ineligibility on claim
-  const { data: ineligibilityReasons } = useClaimIneligibilityReasons(nftDrop, { quantity, walletAddress: address });
+  const ineligibilityReasons = useClaimIneligibilityReasons(nftDrop, { quantity, walletAddress: address, });
 
   // Check if there's NFTs left on the active claim phase
   const isNotReady =
@@ -165,55 +165,55 @@ const Home: NextPage = () => {
               </div>
             ) : (
                   canClaim ? (
-              <>
-                <p>Quantity</p>
-                <div className={styles.quantityContainer}>
-                  <button
-                    className={`${styles.quantityControlButton}`}
-                    onClick={() => setQuantity(quantity - 1)}
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
+                  <>
+                    <p>Quantity</p>
+                    <div className={styles.quantityContainer}>
+                      <button
+                        className={`${styles.quantityControlButton}`}
+                        onClick={() => setQuantity(quantity - 1)}
+                        disabled={quantity <= 1}
+                      >
+                        -
+                      </button>
 
-                  <h4>{quantity}</h4>
+                      <h4>{quantity}</h4>
 
-                  <button
-                    className={`${styles.quantityControlButton}`}
-                    onClick={() => setQuantity(quantity + 1)}
-                    disabled={
-                      quantity >=
-                      parseInt(
-                        activeClaimCondition?.quantityLimitPerTransaction ||
-                          '0',
-                      )
-                    }
-                  >
-                    +
-                  </button>
-                </div>
+                      <button
+                        className={`${styles.quantityControlButton}`}
+                        onClick={() => setQuantity(quantity + 1)}
+                        disabled={
+                          quantity >=
+                          parseInt(
+                            activeClaimCondition?.quantityLimitPerTransaction ||
+                              '0',
+                          )
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
 
-                <button
-                  className={`${styles.mainButton} ${styles.spacerTop} ${styles.spacerBottom}`}
-                  onClick={mint}
-                  disabled={claimNFT.isLoading}
-                >
-                  {claimNFT.isLoading
-                    ? 'Minting...'
-                    : `Mint${quantity > 1 ? ` ${quantity}` : ''}${
-                        activeClaimCondition?.price.eq(0)
-                          ? ' (Free)'
-                          : activeClaimCondition?.currencyMetadata.displayValue
-                          ? ` (${formatUnits(
-                              priceToMint,
-                              activeClaimCondition.currencyMetadata.decimals,
-                            )} ${
-                              activeClaimCondition?.currencyMetadata.symbol
-                            })`
-                          : ''
-                      }`}
-                </button>
-              </>
+                    <button
+                      className={`${styles.mainButton} ${styles.spacerTop} ${styles.spacerBottom}`}
+                      onClick={mint}
+                      disabled={claimNFT.isLoading}
+                    >
+                      {claimNFT.isLoading
+                        ? 'Minting...'
+                        : `Mint${quantity > 1 ? ` ${quantity}` : ''}${
+                            activeClaimCondition?.price.eq(0)
+                              ? ' (Free)'
+                              : activeClaimCondition?.currencyMetadata.displayValue
+                              ? ` (${formatUnits(
+                                  priceToMint,
+                                  activeClaimCondition.currencyMetadata.decimals,
+                                )} ${
+                                  activeClaimCondition?.currencyMetadata.symbol
+                                })`
+                              : ''
+                          }`}
+                    </button>
+                  </>
                   ) :
                   (
                     <>
