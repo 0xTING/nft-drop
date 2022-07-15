@@ -23,6 +23,7 @@ import {
   ChainId,
   useAddress,
   useActiveClaimCondition,
+  useChainId,
   useClaimedNFTSupply,
   useClaimIneligibilityReasons,
   useClaimNFT,
@@ -42,6 +43,7 @@ import type { NextPage } from 'next';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from '../styles/Theme.module.css';
 import { parseIneligibility } from "../utils/parseIneligibility";
+import { ConnectWalletButton } from "../shared/connect-wallet-button";
 
 // Put Your NFT Drop Contract address from the dashboard here
 //const myNftDropContractAddress = '0xAEb6935cb8B5c1FC766E3EFd91164B04e6aAF259';
@@ -58,9 +60,10 @@ const Home: NextPage = () => {
   const connectWithCoinbaseWallet = useCoinbaseWallet();
   const isOnWrongNetwork = useNetworkMismatch();
   const claimNFT = useClaimNFT(nftDrop);
+  const chainId = useChainId();
   const [, switchNetwork] = useNetwork();
   const loaded = useRef(false);
-
+  const expectedChainId = ChainId.Rinkeby;
   // The amount the user claims
   const [quantity, setQuantity] = useState(1); // default to 1
 
@@ -139,7 +142,7 @@ const Home: NextPage = () => {
   // Function to mint/claim an NFT
   const mint = async () => {
     if (isOnWrongNetwork) {
-      switchNetwork && switchNetwork(ChainId.Rinkeby);
+      switchNetwork && switchNetwork(expectedChainId);
       return;
     }
 
@@ -157,156 +160,80 @@ const Home: NextPage = () => {
     );
   };
 
-  return (
-    <div className={styles.container}>
-      
-      <div className={styles.mintInfoContainer}>
-        <div className={styles.infoSide}>
-          {/* Title of your NFT Collection */}
-          <h1>{contractMetadata?.name}</h1>
-          {/* Description of your NFT Collection */}
-          <p className={styles.description}>{contractMetadata?.description}</p>
-        </div>
-
-        <div className={styles.imageSide}>
-          {/* Image Preview of NFTs */}
-          <img
-            className={styles.image}
-            src={contractMetadata?.image}
-            alt={`${contractMetadata?.name} preview image`}
-          />
-
-          {/* Amount claimed so far */}
-          <div className={styles.mintCompletionArea}>
-            <div className={styles.mintAreaLeft}>
-              <p>Total Minted</p>
-            </div>
-            <div className={styles.mintAreaRight}>
-              {claimedSupply && unclaimedSupply ? (
-                <p>
-                  {/* Claimed supply so far */}
-                  <b>{claimedSupply?.toNumber()}</b>
-                  {' / '}
-                  {
-                    // Add unclaimed and claimed supply to get the total supply
-                    claimedSupply?.toNumber() + unclaimedSupply?.toNumber()
-                  }
-                </p>
-              ) : (
-                // Show loading state if we're still loading the supply
-                <p>Loading...</p>
-              )}
-            </div>
-          </div>
-
-          {/* Show claim button or connect wallet button */}
-          {address ? (
-            // Sold out or show the claim button
-            isSoldOut ? (
-              <div>
-                <h2>Sold Out</h2>
-              </div>
-            ) 
-            : noPhase ? (
-              <div>
-                <h2>Minting is not live yet</h2>
-              </div>
-            )
-             : isNotReady ? (
-              <div>
-                <h2>Not ready to be minted yet</h2>
-              </div>
-            ) : (
-                  canClaim ? (
-                  <>
-
-
-
-                    <p>Quantity</p>
-                    <div className={styles.quantityContainer}>
-                      <button
-                        className={`${styles.quantityControlButton}`}
-                        onClick={() => setQuantity(quantity - 1)}
-                        disabled={quantity <= 1}
-                      >
-                        -
-                      </button>
-
-                      <h4>{quantity}</h4>
-
-                      <button
-                        className={`${styles.quantityControlButton}`}
-                        onClick={() => setQuantity(quantity + 1)}
-                        disabled={
-                          quantity >= lowerMaxClaimable
-                        }
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <button
-                      className={`${styles.mainButton} ${styles.spacerTop} ${styles.spacerBottom}`}
-                      onClick={mint}
-                      disabled={claimNFT.isLoading}
-                    >
-                      {claimNFT.isLoading
-                        ? 'Minting...'
-                        : `Mint${quantity > 1 ? ` ${quantity}` : ''}${
-                            activeClaimCondition?.price.eq(0)
-                              ? ' (Free)'
-                              : activeClaimCondition?.currencyMetadata.displayValue
-                              ? ` (${formatUnits(
-                                  priceToMint,
-                                  activeClaimCondition.currencyMetadata.decimals,
-                                )} ${
-                                  activeClaimCondition?.currencyMetadata.symbol
-                                })`
-                              : ''
-                          }`}
-                    </button>
-                  </>
-                  ) : claimIneligibilityReasons.data?.length ? (
-                    parseIneligibility(claimIneligibilityReasons.data, quantity)
-                  ) :
-                  (
-                    <>
-                      <p>Minting Unavailable</p>
-                    </>
-                  )
-            )
-          ) : (
-            <div className={styles.buttons}>
-              <button
-                className={styles.mainButton}
-                onClick={connectWithMetamask}
-              >
-                Connect MetaMask
-              </button>
-              <button
-                className={styles.mainButton}
-                onClick={connectWithWalletConnect}
-              >
-                Connect with Wallet Connect
-              </button>
-              <button
-                className={styles.mainButton}
-                onClick={connectWithCoinbaseWallet}
-              >
-                Connect with Coinbase Wallet
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-      {/* Powered by thirdweb */}{' '}
-      <img
-        src="/logo.png"
-        alt="thirdweb Logo"
-        width={135}
-        className={styles.buttonGapTop}
+  
+  // Enable all queries
+  const isEnabled = !!nftDrop && !!address && chainId === expectedChainId;
+  if (!isEnabled) {
+    return (
+      <ConnectWalletButton
+        expectedChainId={expectedChainId}
+        primaryColor={'blue'}
+        secondaryColor={'white'}
       />
-    </div>
+    );
+  }
+
+  return (
+    <Stack spacing={4} align="center" w="100%">
+      <Flex w="100%" direction={{ base: "column", sm: "row" }} gap={2}>
+        <NumberInput
+          inputMode="numeric"
+          value={quantity}
+          onChange={(stringValue, value) => {
+            if (stringValue === "") {
+              setQuantity(1);
+            } else {
+              setQuantity(value);
+            }
+          }}
+          min={1}
+          max={lowerMaxClaimable}
+          maxW={{ base: "100%", sm: "100px" }}
+          bgColor="inputBg"
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <LightMode>
+          <Button
+            fontSize={{ base: "label.md", md: "label.lg" }}
+            isLoading={claimNFT.isLoading || isLoading}
+            isDisabled={!canClaim}
+            leftIcon={<IoDiamondOutline />}
+            onClick={mint}
+            w="100%"
+            colorScheme={'blue'}
+          >
+            {isSoldOut
+              ? "Sold out"
+              : canClaim
+              ? `Mint${quantity > 1 ? ` ${quantity}` : ""}${
+                  activeClaimCondition?.price.eq(0)
+                    ? " (Free)"
+                    : activeClaimCondition?.currencyMetadata.displayValue
+                    ? ` (${formatUnits(
+                        priceToMint,
+                        activeClaimCondition.currencyMetadata.decimals,
+                      )} ${activeClaimCondition?.currencyMetadata.symbol})`
+                    : ""
+                }`
+              : claimIneligibilityReasons.data?.length
+              ? parseIneligibility(claimIneligibilityReasons.data, quantity)
+              : "Minting Unavailable"}
+          </Button>
+        </LightMode>
+      </Flex>
+      {claimedSupply && (
+        <Text size="label.md" color="green.500">
+          {`${claimedSupply?.toString()} / ${(
+            claimedSupply?.add(unclaimedSupply || 0) || 0
+          ).toString()} claimed`}
+        </Text>
+      )}
+    </Stack>
   );
 };
 
