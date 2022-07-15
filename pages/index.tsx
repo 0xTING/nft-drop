@@ -160,10 +160,9 @@ const Home: NextPage = () => {
               </div>
             ) : (
               <>
-
                 <p>Quantity</p>
-                <p>{activeClaimCondition}</p>
-                <p>{ineligibilityReasons}</p>
+                <p>{$`{activeClaimCondition}`}</p>
+                <p>{$`{ineligibilityReasons}`}</p>
                 <div className={styles.quantityContainer}>
                   <button
                     className={`${styles.quantityControlButton}`}
