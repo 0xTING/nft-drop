@@ -1,21 +1,45 @@
 import {
+  Button,
+  Center,
+  ChakraProvider,
+  Flex,
+  Grid,
+  Heading,
+  Icon,
+  Image,
+  LightMode,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Spinner,
+  Stack,
+  Text,
+  useColorMode,
+  useToast,
+} from "@chakra-ui/react";
+import {
   ChainId,
-  useClaimedNFTSupply,
-  useContractMetadata,
-  useNetwork,
-  useNFTDrop,
-  useUnclaimedNFTSupply,
+  useAddress,
   useActiveClaimCondition,
+  useClaimedNFTSupply,
   useClaimIneligibilityReasons,
   useClaimNFT,
+  useContractMetadata,
+  useNetwork,
+  useNetworkMismatch,
+  useNFTDrop,
+  useSignatureDrop,
+  useUnclaimedNFTSupply,
+  useMetamask,
   useWalletConnect,
   useCoinbaseWallet,
 } from '@thirdweb-dev/react';
-import { useNetworkMismatch } from '@thirdweb-dev/react';
-import { useAddress, useMetamask } from '@thirdweb-dev/react';
+import { IoDiamondOutline } from "react-icons/io5";
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from '../styles/Theme.module.css';
 import { parseIneligibility } from "../utils/parseIneligibility";
 
@@ -35,6 +59,7 @@ const Home: NextPage = () => {
   const isOnWrongNetwork = useNetworkMismatch();
   const claimNFT = useClaimNFT(nftDrop);
   const [, switchNetwork] = useNetwork();
+  const loaded = useRef(false);
 
   // The amount the user claims
   const [quantity, setQuantity] = useState(1); // default to 1
@@ -52,7 +77,7 @@ const Home: NextPage = () => {
   const { data: activeClaimCondition } = useActiveClaimCondition(nftDrop);
 
   // Load ineligibility on claim
-  const ineligibilityReasons = useClaimIneligibilityReasons(nftDrop, { quantity, walletAddress: address, });
+  const claimIneligibilityReasons = useClaimIneligibilityReasons(nftDrop, { quantity, walletAddress: address, });
 
   // Check if there's NFTs left on the active claim phase
   const isNotReady =
@@ -65,10 +90,14 @@ const Home: NextPage = () => {
 
   // Check if there's any NFTs left
   const isSoldOut = unclaimedSupply?.toNumber() === 0;
-   
+
+  // check if loading
+  const isLoading = claimIneligibilityReasons.isLoading && !loaded.current;
+
+
   // Not soldout, connected and there are no ineligibility reasons
   const canClaim =
-    !isSoldOut && !!address && !ineligibilityReasons.data?.length;
+    !isSoldOut && !!address && !claimIneligibilityReasons.data?.length;
 
   // Check price
   const price = parseUnits(
@@ -78,6 +107,29 @@ const Home: NextPage = () => {
 
   // Multiply depending on quantity
   const priceToMint = price.mul(quantity);
+
+  const quantityLimitPerTransaction =
+    activeClaimCondition?.quantityLimitPerTransaction;
+  
+  const snapshot = activeClaimCondition?.snapshot;
+  
+  const useDefault = useMemo(
+    () =>
+      !snapshot ||
+      snapshot?.find((user) => user.address === address)?.maxClaimable === "0",
+    [snapshot, address],
+  );
+
+  const maxClaimable = useDefault
+    ? isNaN(Number(quantityLimitPerTransaction))
+      ? 1000
+      : Number(quantityLimitPerTransaction)
+    : Number(snapshot?.find((user) => user.address === address)?.maxClaimable);
+
+  const lowerMaxClaimable = Math.min(
+    maxClaimable,
+    unclaimedSupply?.toNumber() || 1000,
+  );
 
   // Loading state while we fetch the metadata
   if (!nftDrop || !contractMetadata) {
@@ -167,6 +219,70 @@ const Home: NextPage = () => {
             ) : (
                   canClaim ? (
                   <>
+
+<Stack spacing={4} align="center" w="100%">
+      <Flex w="100%" direction={{ base: "column", sm: "row" }} gap={2}>
+        <NumberInput
+          inputMode="numeric"
+          value={quantity}
+          onChange={(stringValue, value) => {
+            if (stringValue === "") {
+              setQuantity(1);
+            } else {
+              setQuantity(value);
+            }
+          }}
+          min={1}
+          max={lowerMaxClaimable}
+          maxW={{ base: "100%", sm: "100px" }}
+          bgColor="inputBg"
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <LightMode>
+          <Button
+            fontSize={{ base: "label.md", md: "label.lg" }}
+            isLoading={claimNFT.isLoading || isLoading}
+            isDisabled={!canClaim}
+            leftIcon={<IoDiamondOutline />}
+            onClick={mint}
+            w="100%"
+            colorScheme={'blue'}
+          >
+            {isSoldOut
+              ? "Sold out"
+              : canClaim
+              ? `Mint${quantity > 1 ? ` ${quantity}` : ""}${
+                  activeClaimCondition?.price.eq(0)
+                    ? " (Free)"
+                    : activeClaimCondition?.currencyMetadata.displayValue
+                    ? ` (${formatUnits(
+                        priceToMint,
+                        activeClaimCondition.currencyMetadata.decimals,
+                      )} ${activeClaimCondition?.currencyMetadata.symbol})`
+                    : ""
+                }`
+              : claimIneligibilityReasons.data?.length
+              ? parseIneligibility(claimIneligibilityReasons.data, quantity)
+              : "Minting Unavailable"}
+          </Button>
+        </LightMode>
+      </Flex>
+      {claimedSupply && (
+        <Text size="label.md" color="green.500">
+          {`${claimedSupply?.toString()} / ${(
+            claimedSupply?.add(unclaimedSupply || 0) || 0
+          ).toString()} claimed`}
+        </Text>
+      )}
+    </Stack>
+
+
+
                     <p>Quantity</p>
                     <div className={styles.quantityContainer}>
                       <button
@@ -183,11 +299,7 @@ const Home: NextPage = () => {
                         className={`${styles.quantityControlButton}`}
                         onClick={() => setQuantity(quantity + 1)}
                         disabled={
-                          quantity >=
-                          parseInt(
-                            activeClaimCondition?.quantityLimitPerTransaction ||
-                              '0',
-                          )
+                          quantity >= lowerMaxClaimable
                         }
                       >
                         +
@@ -215,8 +327,8 @@ const Home: NextPage = () => {
                           }`}
                     </button>
                   </>
-                  ) : ineligibilityReasons.data?.length ? (
-                    parseIneligibility(ineligibilityReasons.data, quantity)
+                  ) : claimIneligibilityReasons.data?.length ? (
+                    parseIneligibility(claimIneligibilityReasons.data, quantity)
                   ) :
                   (
                     <>
