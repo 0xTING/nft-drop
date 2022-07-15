@@ -55,8 +55,8 @@ const Home: NextPage = () => {
     parseInt(activeClaimCondition?.availableSupply) === 0;
 
   // Check if there's an active claim phase currently
-  //const noPhase =
- //   !activeClaimCondition;
+  const noPhase =
+    !activeClaimCondition;
 
   // Check if there's any NFTs left
   const isSoldOut = unclaimedSupply?.toNumber() === 0;
@@ -145,11 +145,11 @@ const Home: NextPage = () => {
                 <h2>Sold Out</h2>
               </div>
             ) 
-//            : noPhase ? (
-//              <div>
-//                <h2>There is no minting phase set</h2>
-//              </div>
-//            )
+            : noPhase ? (
+              <div>
+                <h2>There is no minting phase set</h2>
+              </div>
+            )
              : isNotReady ? (
               <div>
                 <h2>Not ready to be minted yet</h2>
