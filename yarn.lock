@@ -399,6 +399,14 @@
   dependencies:
     "@chakra-ui/utils" "2.0.4"
 
+"@chakra-ui/icons@^2.0.4":
+  "integrity" "sha512-/Xh6UtIilFhSCxZ6pKmB3zaatvGMc+IAvPb0TvlegWfNaLI7XwHWkEoK+GxYXV02wT/yqmup2gd41/OL3S0YLg=="
+  "resolved" "https://registry.npmjs.org/@chakra-ui/icons/-/icons-2.0.4.tgz"
+  "version" "2.0.4"
+  dependencies:
+    "@chakra-ui/icon" "3.0.4"
+    "@types/react" "^18.0.1"
+
 "@chakra-ui/image@2.0.5":
   "integrity" "sha512-1+/VjzjNv9moxrydsEryVhl3NOPxK1xr7BMd1UmPCp4g8ZZNNFmEah2FiL7GDVBdf2I4/e/2xMCUpndJJiIlCQ=="
   "resolved" "https://registry.npmjs.org/@chakra-ui/image/-/image-2.0.5.tgz"
@@ -1663,6 +1671,15 @@
   "integrity" "sha512-mk0BL8zBinf2ozNr3qPnlu1oyVTYq+4V7WA76RgxUAtf0Em/Wbid38KN6n4abEkvO4xMTBWmnP1FtQzgkEiJoA=="
   "resolved" "https://registry.npmjs.org/@types/react/-/react-17.0.47.tgz"
   "version" "17.0.47"
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    "csstype" "^3.0.2"
+
+"@types/react@^18.0.1":
+  "integrity" "sha512-iz3BtLuIYH1uWdsv6wXYdhozhqj20oD4/Hk2DNXIn1kFsmp9x8d9QB6FnPhfkbhd2PgEONt9Q1x/ebkwjfFLow=="
+  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.15.tgz"
+  "version" "18.0.15"
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -4472,7 +4489,7 @@
   "resolved" "https://registry.npmjs.org/react-cool-dimensions/-/react-cool-dimensions-2.0.7.tgz"
   "version" "2.0.7"
 
-"react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.1.0", "react-dom@>=16.8 || ^17.0.0 || ^18.0.0", "react-dom@>=18":
+"react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.2.0", "react-dom@>=16.8 || ^17.0.0 || ^18.0.0", "react-dom@>=18":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
