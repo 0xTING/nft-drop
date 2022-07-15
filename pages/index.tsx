@@ -162,8 +162,8 @@ const Home: NextPage = () => {
               <>
 
                 <p>Quantity</p>
-                <p>{activeClaimCondition?.availableSupply}</p>
-                {console.log(ineligibilityReasons)}
+                <p>{activeClaimCondition}</p>
+                <p><{ineligibilityReasons}/p>
                 <div className={styles.quantityContainer}>
                   <button
                     className={`${styles.quantityControlButton}`}
