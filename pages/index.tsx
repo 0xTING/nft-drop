@@ -161,7 +161,7 @@ const Home: NextPage = () => {
             ) : (
               <>
                 <p>Quantity</p>
-                <p>{`${activeClaimCondition}`}</p>
+                <p>{JSON.stringify(`${activeClaimCondition}`)}</p>
                 <p>{`${ineligibilityReasons}`}</p>
                 <div className={styles.quantityContainer}>
                   <button
