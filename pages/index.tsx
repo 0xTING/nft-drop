@@ -220,67 +220,6 @@ const Home: NextPage = () => {
                   canClaim ? (
                   <>
 
-<Stack spacing={4} align="center" w="100%">
-      <Flex w="100%" direction={{ base: "column", sm: "row" }} gap={2}>
-        <NumberInput
-          inputMode="numeric"
-          value={quantity}
-          onChange={(stringValue, value) => {
-            if (stringValue === "") {
-              setQuantity(1);
-            } else {
-              setQuantity(value);
-            }
-          }}
-          min={1}
-          max={lowerMaxClaimable}
-          maxW={{ base: "100%", sm: "100px" }}
-          bgColor="inputBg"
-        >
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-        <LightMode>
-          <Button
-            fontSize={{ base: "label.md", md: "label.lg" }}
-            isLoading={claimNFT.isLoading || isLoading}
-            isDisabled={!canClaim}
-            leftIcon={<IoDiamondOutline />}
-            onClick={mint}
-            w="100%"
-            colorScheme={'blue'}
-          >
-            {isSoldOut
-              ? "Sold out"
-              : canClaim
-              ? `Mint${quantity > 1 ? ` ${quantity}` : ""}${
-                  activeClaimCondition?.price.eq(0)
-                    ? " (Free)"
-                    : activeClaimCondition?.currencyMetadata.displayValue
-                    ? ` (${formatUnits(
-                        priceToMint,
-                        activeClaimCondition.currencyMetadata.decimals,
-                      )} ${activeClaimCondition?.currencyMetadata.symbol})`
-                    : ""
-                }`
-              : claimIneligibilityReasons.data?.length
-              ? parseIneligibility(claimIneligibilityReasons.data, quantity)
-              : "Minting Unavailable"}
-          </Button>
-        </LightMode>
-      </Flex>
-      {claimedSupply && (
-        <Text size="label.md" color="green.500">
-          {`${claimedSupply?.toString()} / ${(
-            claimedSupply?.add(unclaimedSupply || 0) || 0
-          ).toString()} claimed`}
-        </Text>
-      )}
-    </Stack>
-
 
 
                     <p>Quantity</p>
