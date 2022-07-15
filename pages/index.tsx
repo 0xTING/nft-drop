@@ -17,6 +17,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import styles from '../styles/Theme.module.css';
+import { parseIneligibility } from "../utils/parseIneligibility";
 
 // Put Your NFT Drop Contract address from the dashboard here
 //const myNftDropContractAddress = '0xAEb6935cb8B5c1FC766E3EFd91164B04e6aAF259';
@@ -214,10 +215,12 @@ const Home: NextPage = () => {
                           }`}
                     </button>
                   </>
+                  ) : ineligibilityReasons.data?.length ? (
+                    parseIneligibility(ineligibilityReasons.data, quantity)
                   ) :
                   (
                     <>
-                      <p>You cannot mint this phase</p>
+                      <p>Minting Unavailable</p>
                     </>
                   )
             )
