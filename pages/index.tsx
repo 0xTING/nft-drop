@@ -156,7 +156,7 @@ const Home: NextPage = () => {
             ) 
             : noPhase ? (
               <div>
-                <h2>There is no minting phase set</h2>
+                <h2>Minting is not live yet</h2>
               </div>
             )
              : isNotReady ? (
